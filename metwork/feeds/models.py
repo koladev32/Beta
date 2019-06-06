@@ -11,7 +11,7 @@ class Event(models.Model):
         
     def __str__(self):
         "Renvoie une representation du post"
-        return self.Eventer + '\n' + self.description + '\n' + str(self.date_added)
+        return "Crée par {} le {} \n. {}".format(self.Eventer, str(self.date_added), self.description[:50])
 
 class Comment(models.Model):
     commentor = models.CharField(max_length=100)
@@ -21,4 +21,4 @@ class Comment(models.Model):
     
     def __str__(self):
         "Renvoie une representation du commentaire"
-        return self.commentor + '\n' + self.text      
+        return "Crée par {} le {}. \n {}".format(self.commentor, str(self.date_added), self.text[:50])
