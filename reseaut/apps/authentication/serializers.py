@@ -2,6 +2,8 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 from .models import User
 
+from apps.profiles.serializers import ProfileSerializer
+
 class RegistrationSerializer(serializers.ModelSerializer):
 
 
@@ -57,14 +59,24 @@ class UserSerializer(serializers.ModelSerializer):
         write_only=True
     )
 
+    profile = ProfileSerializer(write_only=True)
+
+    bio = serializers.CharField(source='profile.bio', read_only=True)
+
+    image = serializers.CharField(source='profile.image', read_only=True)
+
     class Meta:
         model = User
-        fields = ('email','last_name','first_name','password','token')
+        fields = ('email','last_name','first_name','password','token',
+            'bio', 'image','profile'
+        )
 
         read_only_fields = ('token',)
 
     def update(self,instance, validated_data):
         """Update some informations about the user."""
+
+        profile_data = validated_data.pop('profile',{})
 
         password = validated_data.pop('password',None)
 
@@ -75,5 +87,13 @@ class UserSerializer(serializers.ModelSerializer):
             instance.set_password(password)
 
         instance.save()
+
+
+
+        for (key,value) in profile_data.items():
+            setattr(instance.profile,key,value)
+
+        instance.profile.save()
+
 
         return instance

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     'apps.authentication',
     'apps.profiles',
+    'apps.events'
 ]
 
 MIDDLEWARE = [
