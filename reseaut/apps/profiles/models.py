@@ -11,7 +11,23 @@ class Profile(TimestampedModel):
 
     #work_domain = models.CharField(max_length=50)
 
+    follows = models.ManyToManyField('self',symmetrical=False,related_name='followed_by')
+
     def __str__(self):
         return self.user.email
 
+    def follow(self,profile):
 
+        self.follows.add(profile)
+
+    def unfollow(self,profile):
+
+        self.follows.remove(profile)
+
+    def is_following(self,profile):
+
+        return self.follows.filter(pk=profile.pk).exists()
+        
+    def is_followed_by(self,profile):
+
+        return self.is_followed_by.filter(pk=profile.pk).exists()
