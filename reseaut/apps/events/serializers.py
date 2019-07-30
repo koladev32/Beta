@@ -90,3 +90,13 @@ class CommentSerializer(serializers.ModelSerializer):
     def get_created_at(self,instance):
         return instance.created_at.isoformat()
 
+    def get_favorited(self,instance):
+        request = self.context.get('request',None)
+
+        if request is None:
+            return False
+        
+        if not request.is_authenticated():
+            return False
+        
+        return request.user.profile.has_favorited(instance)
