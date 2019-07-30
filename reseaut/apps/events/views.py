@@ -19,7 +19,7 @@ class EventViewSet(mixins.CreateModelMixin,
                     viewsets.GenericViewSet):
 
     lookup_field = 'slug'
-    queryset = Event.objects.selected_related('author','author_user')
+    queryset = Event.objects.select_related('author','author__user')
     permissions_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = EventSerializer
 

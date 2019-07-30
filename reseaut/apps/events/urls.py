@@ -11,5 +11,5 @@ router.register(r'events',EventViewSet)
 app_name = 'events'
 
 urlpatterns = [
-    path('',include(router._urls)),
+    path('',include(router.urls)),
 ]

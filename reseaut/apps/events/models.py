@@ -21,4 +21,15 @@ class Event(TimestampedModel):
 
     def __str__(self):
         return self.event_name
+
+class Comment(TimestampedModel):
+
+    event = models.ForeignKey("events.Event",on_delete=models.CASCADE)
+
+    author = models.ForeignKey("profiles.Profile",on_delete=models.CASCADE)
+
+    text = models.TextField()
+
+    def __str__(self):
+        return self.author + " " + self.text
     

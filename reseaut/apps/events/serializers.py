@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from apps.profiles.serializers import ProfileSerializer
-from .models import Event
+from .models import Event,Comment
 
 class EventSerializer(serializers.ModelSerializer):
 
@@ -41,19 +41,53 @@ class EventSerializer(serializers.ModelSerializer):
             'updateAt'
         )
 
-        def create(self, validated_data):
-            author = self.context.get('author',None)
+    def create(self, validated_data):
+        author = self.context.get('author',None)
 
-            return Event.objects.create(author=author,**validated_data)
+        return Event.objects.create(author=author,**validated_data)
 
 
-        def get_created_at(self,instance):
-            return instance.created_at.isofromat()
+    def get_created_at(self,instance):
+        return instance.created_at.isoformat()
 
-        def get_image(self,obj):
-            if obj.image:
-                return image
-            return ''
+    def get_image(self,obj):
+        if obj.image:
+            return obj.image
+        return ''
 
-        def get_updated_at(self,instance):
-            return instance.updated_at.isoformat()
+    def get_updated_at(self,instance):
+        return instance.updated_at.isoformat()
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = ProfileSerializer(read_only=True)
+
+    description = serializers.CharField()
+
+    created_at = serializers.SerializerMethodField(method_name="get_created_at")
+    updated_at = serializers.SerializerMethodField(method_name="get_updated_at")
+
+    class Meta:
+
+        model = Comment
+
+        fields = (
+            'author',
+            'article',
+            'description',
+            'created_at',
+            'updated_at'
+        )  
+
+    def create(self, **validated_data):
+        author = self.context['author']
+        event = self.context['event']
+
+        return Event.objects.create(author=author,event=event **validated_data)
+
+    def get_updated_at(self,instance):
+        return instance.updated_at.isoformat()
+
+    def get_created_at(self,instance):
+        return instance.created_at.isoformat()
+    

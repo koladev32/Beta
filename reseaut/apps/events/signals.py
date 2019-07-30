@@ -6,12 +6,12 @@ from apps.core.utils import generate_random_string
 
 from .models import Event
 
-@receiver(pre_save, sender=Article)
+@receiver(pre_save, sender=Event)
 def add_slug_to_article_if_not_exists(sender, instance, *args, **kwargs):
     MAXIMUM_SLUG_LENGTH = 255
 
     if instance and not instance.slug:
-        slug = slugify(instance.title)
+        slug = slugify(instance.event_name)
         unique = generate_random_string()
 
         if len(slug) > MAXIMUM_SLUG_LENGTH:
@@ -28,4 +28,4 @@ def add_slug_to_article_if_not_exists(sender, instance, *args, **kwargs):
             else:
                 slug = '-'.join(parts[:-1])
 
-instance.slug = slug + '-' + unique
+        instance.slug = slug + '-' + unique
