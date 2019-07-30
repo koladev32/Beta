@@ -6,6 +6,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     bio = serializers.CharField(allow_blank=True,required=False)
     #work_domain = serializers.CharField(max_length=50)
     image = serializers.SerializerMethodField()
+    following = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
@@ -16,3 +17,18 @@ class ProfileSerializer(serializers.ModelSerializer):
         if obj.image:
             return obj.image
         return 'https://image.flaticon.com/icons/svg/1738/1738691.svg'
+    
+    def get_following(self,instance):
+
+        request = self.context.get('request',None)
+
+        if request is None:
+            return False
+        
+        if not request.user.is_authenticated:
+            return False
+        
+        follower = request.user.profile
+        followee = instance
+
+        return follower.is_following(followee)
