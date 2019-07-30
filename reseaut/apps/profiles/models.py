@@ -36,11 +36,11 @@ class Profile(TimestampedModel):
 
     def favorite(self,event):
 
-        self.favorite.add(event)
+        self.favorites.add(event)
 
     def unfavorite(self,event):
 
-        self.unfavorite.remove(event)
+        self.favorites.remove(event)
     
     def has_favorited(self,event):
         return self.favorites.filter(pk=event.pk).exists()

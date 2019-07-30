@@ -16,6 +16,10 @@ class EventSerializer(serializers.ModelSerializer):
 
     location = serializers.CharField(required=True)
 
+    favorited = serializers.SerializerMethodField()
+
+    favoritesCount = serializers.SerializerMethodField(method_name="get_favorites_count")
+
     image = serializers.SerializerMethodField()
 
     slug = serializers.SlugField(required=False)
@@ -34,6 +38,8 @@ class EventSerializer(serializers.ModelSerializer):
             'event_name',
             'event_date',
             'event_time',
+            'favorited',
+            'favoritesCount',
             'location',
             'image',
             'slug',
@@ -45,6 +51,20 @@ class EventSerializer(serializers.ModelSerializer):
         author = self.context.get('author',None)
 
         return Event.objects.create(author=author,**validated_data)
+
+    def get_favorited(self,instance):
+        request = self.context.get('request',None)
+
+        if request is None:
+            return False
+        
+        if not request.user.is_authenticated:
+            return False
+        
+        return request.user.profile.has_favorited(instance)
+    
+    def get_favorites_count(self,instance):
+        return instance.favorited_by.count()
 
 
     def get_created_at(self,instance):
@@ -96,7 +116,7 @@ class CommentSerializer(serializers.ModelSerializer):
         if request is None:
             return False
         
-        if not request.is_authenticated():
+        if not request.user.is_authenticated:
             return False
         
         return request.user.profile.has_favorited(instance)

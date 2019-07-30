@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 
-from rest_framework import mixins,status,viewsets
+from rest_framework import mixins,status,viewsets,views
 
 from rest_framework.exceptions import NotFound
 
@@ -105,4 +105,42 @@ class ComementDestroyAPIView(generics.DestroyAPIView):
         comment.delete()
 
         return Response(None,status=status.HTTP_204_NO_CONTENT)
+
+class EventFavoriteAPIView(views.APIView):
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = (EventJSONRenderer,)
+    serializer_class = EventSerializer
+
+    def delete(self,request,event_slug=None):
+        profile = self.request.user.profile
+
+        try:
+            event = Event.objects.get(slug=event_slug)
+        except Event.DoesNotExist:
+            raise NotFound('An event with this slug does not exist.')
+        
+        profile.unfavorite(event)
+
+        serializer = self.serializer_class(event,context={
+            'request':request
+        })
+
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
+
+    def post(self,request,event_slug=None):
+        profile = self.request.user.profile
+
+        try:
+            event = Event.objects.get(slug=event_slug)
+        except:
+            raise NotFound('An article with this slug was not found.')
+        
+        profile.favorite(event)
+
+        serializer = self.serializer_class(event,context={
+            'request':request
+        })
+
+        return Response(serializer.data,status=status.HTTP_201_CREATED)
         
