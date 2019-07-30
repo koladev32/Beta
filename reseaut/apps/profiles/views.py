@@ -1,8 +1,9 @@
-from rest_framework import status
+from rest_framework import status,serializers
 from rest_framework.generics import RetrieveAPIView
-from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.response import Response
-
+from rest_framework.exceptions import NotFound
 from .models import Profile
 from .renderers import ProfileJSONRenderer
 from .serializers import ProfileSerializer
@@ -21,3 +22,41 @@ class ProfileRetrieveAPIView(RetrieveAPIView):
         serializer = self.serializer_class(profile)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class ProfileFollowAPI(APIView):
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = (ProfileJSONRenderer,)
+    serializer_class = ProfileSerializer
+
+    def delete(self,request,email=None):
+        follower = self.request.user.profile
+
+        try:
+            followee = Profile.objects.get(user__email=email)
+        except:
+            raise NotFound('A profile with this username was not found.')
+        follower.unfollow(followee)
+
+        serializer = self.serializer_class(followee,context={
+            'request':request
+        })
+
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
+    def post(self,request,email=None):
+        follower = self.request.user.profile
+
+        try:
+            followee = Profile.objects.get(user__email=email)
+        except Profile.DoesNotExist:
+            raise NotFound('A profile with this username was not found.')
+
+        if follower.pk is followee.pk:
+            raise serializers.ValidationError('You cannot follow yourself.')
+        follower.follow(followee)
+
+        serializer = self.serializer_class(followee,context={
+            'request':request
+        })
+
+        return Response(serializer.data,status=status.HTTP_201_CREATED)    

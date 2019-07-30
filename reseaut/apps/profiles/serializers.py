@@ -10,7 +10,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ('last_name','bio','image')#,'work_domain')
+        fields = ('last_name','bio','image','following')#,'work_domain')
         read_only_fields = ('last_name',)
 
     def get_image(self,obj):
