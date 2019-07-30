@@ -62,7 +62,7 @@ class EventSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     author = ProfileSerializer(read_only=True)
 
-    description = serializers.CharField()
+    text = serializers.CharField()
 
     created_at = serializers.SerializerMethodField(method_name="get_created_at")
     updated_at = serializers.SerializerMethodField(method_name="get_updated_at")
@@ -73,17 +73,16 @@ class CommentSerializer(serializers.ModelSerializer):
 
         fields = (
             'author',
-            'article',
-            'description',
+            'text',
             'created_at',
             'updated_at'
         )  
 
-    def create(self, **validated_data):
+    def create(self, validated_data):
         author = self.context['author']
         event = self.context['event']
 
-        return Event.objects.create(author=author,event=event **validated_data)
+        return Comment.objects.create(author=author,event=event,**validated_data)
 
     def get_updated_at(self,instance):
         return instance.updated_at.isoformat()

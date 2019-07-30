@@ -71,13 +71,14 @@ class CommentListCreateAPIView(generics.ListCreateAPIView):
     lookup_field = 'event__slug'
     lookup_url_kwarg = 'event_slug'
 
-    queryset = Comment.objects.select_related('author','author_user','event','event__author','event__author__user')
-    permission_classes = (IsAuthenticated)
+    queryset = Comment.objects.select_related('author','author__user','event','event__author','event__author__user')
+    permission_classes = (IsAuthenticated,)
     renderers_classes = (CommentJSONRenderer,)
     serializer_class = CommentSerializer
 
     def create(self, request,event_slug=None):
         data = request.data.get('comment',{})
+
         context = {'author':request.user.profile}
 
         try:
@@ -85,7 +86,7 @@ class CommentListCreateAPIView(generics.ListCreateAPIView):
         except Event.DoesNotExist:
             raise NotFound('An Event with this slug does not exist.')
         serializer = self.serializer_class(data=data,context=context)
-        serializer.is_valid(exception_raise=True)
+        serializer.is_valid(raise_exception=True)
 
         serializer.save()
 
