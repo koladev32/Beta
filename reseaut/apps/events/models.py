@@ -31,5 +31,5 @@ class Comment(TimestampedModel):
     text = models.TextField()
 
     def __str__(self):
-        return self.author + " " + self.text
+        return self.author.email + " " + self.text
     
