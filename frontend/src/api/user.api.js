@@ -1,4 +1,4 @@
-import authHeader from '../_helpers/auth-header.js'
+import { authHeader } from '../_helpers/auth-header.js'
 import axios from "axios"
 
 
@@ -28,6 +28,14 @@ function logout(){
     localStorage.removeItem('user');
 }
 
+function getAll(){
+    const requestOptions = {
+        method: 'POST',
+        headers : authHeader()
+    };
+
+    return axios.get('http://127.0.0.1:8000/api/profiles/laracroft@tomb.com',requestOptions).then(handleResponse);
+}
 
 function handleResponse(response){
     return response.text().then( text => {
