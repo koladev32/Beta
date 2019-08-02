@@ -1,18 +1,20 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <div>
+        Welcome {{user.LastName}}
+        <router-link to="/login" >Logout</router-link>
+    </div>
 </template>
 
 <script>
-
-import HelloWorld from '@/components/HelloWorld.vue'
-
 export default {
-  name: 'home',
-  components: {
-    HelloWorld
-  }
-}
+    computed:{
+        user () {
+            return this.$store.state.authentication.user;
+        },
+        
+    },
+    created(){
+        this.$store.dispatch('users/getAll');
+    }
+};
 </script>

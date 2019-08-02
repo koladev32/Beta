@@ -5,26 +5,26 @@
                 <div class="login100-pic js-tilt" data-tilt>
                     <img src="images/img-01.png" alt="IMG">
                 </div>
-                <form class="login100-form validate-form" @submit.prevent="create" method="post">
+                <form class="login100-form validate-form" @submit.prevent="handleSubmit" method="post">
                     <span class="login100-form-title">
                         Member Login
                     </span>
                     <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
-                        <input class="input100" type="text" name="email" placeholder="Email" v-validate="'required'" v-model="user.email">
+                        <input class="input100" type="text" name="email" placeholder="Email" v-validate="'required'" v-model="user.email" :class="{'is-invalid' : submitted && !email}">
                         <span class="focus-input100"></span>
                         <span class="symbol-input100">
                             <i class="fa fa-envelope" aria-hidden="true"></i>
                         </span>
                     </div>
                     <div class="wrap-input100 validate-input" data-validate="Password is required">
-                        <input class="input100" type="password" name="password" placeholder="Password" v-validate="'required'" v-model="user.password">
+                        <input class="input100" type="password" name="password" placeholder="Password" v-validate="'required'" v-model="user.password" :class="{'is-invalid':submitted && !password}">
                         <span class="focus-input100"></span>
                         <span class="symbol-input100">
                             <i class="fa fa-lock" aria-hidden="true"></i>
                         </span>
                     </div>
                     <div class="container-login100-form-btn">
-                        <button class="login100-form-btn" type="submit">
+                        <button class="login100-form-btn" type="submit" :disabled="logginIn">
                             Login
                         </button>
                     </div>
@@ -50,48 +50,36 @@
 
 <script>
 
-    import axios from "axios"
-   
-    export default {
-
-        data() {
-            return {
-                user: {
-                   email:'',
-                   password:''
-                },
-
-                submitted: false,
-                token:'',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Accept': 'application/json'
-                }
-            }
-
-        },
-
-        methods: {
-            create: function (e) {
-                this.$validator.validate().then(
-                    result => {
-                        this.submitted = true;
-                        if (!result) {
-                            return;
-                        }
-                        axios.post('http://127.0.0.1:8000/api/users/login/', JSON.stringify({"user":{"email":this.user.email,"password":this.user.password}}),this.headers)
-                    .then(res => {
-                        this.token = JSON.parse(res).token;
-                        this.$router.push('/');
-                    }).catch(err=>{
-                        console.log(err.data)
-                    })
-                }
-            )
+export default {
+    data() {
+        return {
+            email:'',
+            password:'',
+            submitted:false
         }
-        },
+    },
+    computed:{
+        loggingIn(){
+            return this.$store.state.authentication.status.loggingIn;
+        }
+    },
+    created(){
+        //reset login status
+        this.$store.dispatch('authentication/logout');
+    },
+
+    methods:{
+        handleSubmit(e){
+            this.submitted = true;
+            const {email,password} = this;
+            const {dispatch} = this.$store;
+            if(email && password){
+                dispatch('authentication/login',{email,password});
+            }
+        }
     }
+}
+
 </script>
 
 <style src="../css/main.css"></style>
-

@@ -8,33 +8,32 @@ export const userService = {
     getAll
 };
 
-function login(email,password){
+async function login(email,password){
     const requestOptions = {
         method : 'POST',
         headers : {'Content-Type':'application/json'},
-        body:JSON.stringify({email,password})
+        body: JSON.stringify({email,password})
     };
 
-    return axios.post('http://localhost:8000/api/users/login/', requestOptions)
-    .then(handleResponse)
-    .then(user => {
-        if (user.token){
-            localStorage.setItem('user',JSON.stringify(user));
-        }
-    })
+    const response = await axios.post('http://localhost:8000/api/users/login/', requestOptions);
+    const user = await handleResponse(response);
+    if (user.token) {
+        localStorage.setItem('user', JSON.stringify(user));
+    }
 }
 
 function logout(){
     localStorage.removeItem('user');
 }
 
-function getAll(){
+async function getAll(){
     const requestOptions = {
-        method: 'POST',
+        method: 'GET',
         headers : authHeader()
     };
 
-    return axios.get('http://127.0.0.1:8000/api/profiles/laracroft@tomb.com',requestOptions).then(handleResponse);
+    const response = await axios.get('http://127.0.0.1:8000/api/profiles/laracroft@tomb.com', requestOptions);
+    return handleResponse(response);
 }
 
 function handleResponse(response){

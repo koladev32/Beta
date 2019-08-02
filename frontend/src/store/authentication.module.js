@@ -49,7 +49,7 @@ export const authentication = {
         },
         logout(state){
             state.status = {};
-            state.user = null;
+            state.user = null
         }
     }
 }
