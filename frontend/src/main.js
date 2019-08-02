@@ -3,9 +3,11 @@ import App from './App.vue'
 import router from './router'
 import BootstrapVue from 'bootstrap-vue'
 import VeeValidate from 'vee-validate'
+import Bulma from 'bulma'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
+Vue.use(Bulma)
 
 Vue.use(VeeValidate);
 
