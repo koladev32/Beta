@@ -15,7 +15,7 @@ function login(email,password){
         body:JSON.stringify({email,password})
     };
 
-    return axios.post('http://localhost:8000/api/users/login/', this.requestOptions)
+    return axios.post('http://localhost:8000/api/users/login/', requestOptions)
     .then(handleResponse)
     .then(user => {
         if (user.token){
@@ -28,9 +28,6 @@ function logout(){
     localStorage.removeItem('user');
 }
 
-function getAll(){
-
-}
 
 function handleResponse(response){
     return response.text().then( text => {
