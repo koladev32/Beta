@@ -8,18 +8,24 @@ export const userService = {
     getAll
 };
 
-async function login(email,password){
+function login(email,password){
     const requestOptions = {
         method : 'POST',
         headers : {'Content-Type':'application/json'},
-        body: JSON.stringify({email,password})
+        user: {
+                "email": email,
+                "password": password
+            }
     };
 
-    const response = await axios.post('http://localhost:8000/api/users/login/', requestOptions);
-    const user = await handleResponse(response);
-    if (user.token) {
-        localStorage.setItem('user', JSON.stringify(user));
-    }
+    return axios.post('http://localhost:8000/api/users/login/', requestOptions)
+    .then(handleResponse)
+    .then(user=>{
+        if (user.token){
+            localStorage.setItem('user',JSON.stringify(user));
+        }
+        return user;
+    })
 }
 
 function logout(){
@@ -37,7 +43,7 @@ async function getAll(){
 }
 
 function handleResponse(response){
-    return response.text().then( text => {
+    return response.data;/*text().then( text => {
         const data = text && JSON.parse(text);
         if (!response.ok){
             if (response.status === 401){
@@ -50,5 +56,5 @@ function handleResponse(response){
         }
 
         return data;
-    });
+    });*/
 }

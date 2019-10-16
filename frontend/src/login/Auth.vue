@@ -10,21 +10,21 @@
                         Member Login
                     </span>
                     <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
-                        <input class="input100" type="text" name="email" placeholder="Email" v-validate="'required'" v-model="user.email" :class="{'is-invalid' : submitted && !email}">
+                        <input class="input100" type="text" name="email" placeholder="Email" v-validate="'required'" v-model="email" :class="{'is-invalid' : submitted && !email}">
                         <span class="focus-input100"></span>
                         <span class="symbol-input100">
                             <i class="fa fa-envelope" aria-hidden="true"></i>
                         </span>
                     </div>
                     <div class="wrap-input100 validate-input" data-validate="Password is required">
-                        <input class="input100" type="password" name="password" placeholder="Password" v-validate="'required'" v-model="user.password" :class="{'is-invalid':submitted && !password}">
+                        <input class="input100" type="password" name="password" placeholder="Password" v-validate="'required'" v-model="password" :class="{'is-invalid':submitted && !password}">
                         <span class="focus-input100"></span>
                         <span class="symbol-input100">
                             <i class="fa fa-lock" aria-hidden="true"></i>
                         </span>
                     </div>
                     <div class="container-login100-form-btn">
-                        <button class="login100-form-btn" type="submit" :disabled="logginIn">
+                        <button class="login100-form-btn" type="submit" :disabled="loggingIn">
                             Login
                         </button>
                     </div>
@@ -49,13 +49,12 @@
 </template>
 
 <script>
-
 export default {
     data() {
         return {
             email:'',
             password:'',
-            submitted:false
+            submitted:false,
         }
     },
     computed:{

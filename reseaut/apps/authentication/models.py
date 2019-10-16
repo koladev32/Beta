@@ -35,6 +35,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser,PermissionsMixin,TimestampedModel):
 
+
     SEX_CHOICES = (
         ('M','Masculin'),
         ('F','FEMININ'),

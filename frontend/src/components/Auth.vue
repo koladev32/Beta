@@ -72,23 +72,26 @@
         },
 
         methods: {
-            create: function (e) {
-                this.$validator.validate().then(
-                    result => {
-                        this.submitted = true;
-                        if (!result) {
-                            return;
+                create: function (e) {
+                    this.$validator.validate().then(
+                        result => {
+                            this.submitted = true;
+                            if (!result) {
+                                return;
+                            }
+                            var user =
+                            
+                            
+                            axios.post('http://127.0.0.1:8000/api/users/login/', user, this.headers)
+                                .then(function (res) {
+                                    var token = JSON.stringify(res.data.token);
+                                    console.log(token);
+                                }).catch(err => {
+                                    console.log(err.data)
+                                })
                         }
-                        axios.post('http://127.0.0.1:8000/api/users/login/', JSON.stringify({"user":{"email":this.user.email,"password":this.user.password}}),this.headers)
-                    .then(res => {
-                        this.token = JSON.parse(res).token;
-                        this.$router.push('/');
-                    }).catch(err=>{
-                        console.log(err.data)
-                    })
+                    )
                 }
-            )
-        }
         },
     }
 </script>
